@@ -2,7 +2,7 @@ module Przypomnienia where
 {-
 Projekt z przedmiotu SPOP - Przypomnienia 
 Katarzyna Kucharczyk
-PaweÅ‚ Matuszewski
+Pawe³ Matuszewski
 -}
 import Model
 import Data.Time hiding (Day)
@@ -13,7 +13,7 @@ main :: IO ()
 main = do
     menu(empty, empty) -- obie listy na poczatku puste
 -- ***********
--- menu gÅ‚Ã³wne
+-- menu g³ówne
 -- przyjmuje dwa parametry (liste zaplanowanych i liste zrealizowanych)
 -- ***********
 menu (LZ lzap, LZ lzre)= do
@@ -36,7 +36,7 @@ menu (LZ lzap, LZ lzre)= do
             putStrLn "Zla opcja!"
             menu (LZ lzap, LZ lzre)
 -- ************************************
--- menu zarzÄ…dzania zaplanowanych zadaÅ„
+-- menu zarz¹dzania zaplanowanych zadañ
 -- ************************************
 zarzadzanieZaplanowanymi(LZ lzap, LZ lzre) = do
     putStrLn ""
@@ -45,15 +45,25 @@ zarzadzanieZaplanowanymi(LZ lzap, LZ lzre) = do
     putStrLn "1. Utworz nowe zadanie do wykonania"
     putStrLn "2. Wyswietl wszystkie zaplanowane zadania"
     putStrLn "3. Wyswietl zadania do zrealizowania w dniu dzisiejszym (w tym zalegle)"
-    putStrLn "4. Wybierz zadanie jako zrealizowane"
+    putStrLn "4. Wybierz zadanie jako zrealizowane (po nazwie)"
     putStrLn "5. Usun zadanie lub wszystkie zadania"
     putStrLn "6. Powrot"
     option <- getLine
     case option of
         "1" -> menuDodawania(LZ lzap, LZ lzre)
         "2" -> do 
-            print (LZ lzap)
+            putStrLn (showAll (LZ lzap))
             zarzadzanieZaplanowanymi(LZ lzap, LZ lzre)
+        -- TODO: na razie opcja 4 dodaje element do listy zrealizowanych
+        -- Nale¿y dodaæ usuwanie/zmianê daty w zale¿noœci od powtarzalnoœci zadania
+        "4" -> do
+            putStrLn "Podaj nazwe"
+            nazwa <- getLine
+            if czyString nazwa == False then do
+                putStrLn "Bledny ciag znakow\nSprobuj ponownie."
+                zarzadzanieZaplanowanymi(LZ lzap, LZ lzre)
+            else do
+                zarzadzanieZaplanowanymi(LZ lzap, insertAll (findByName nazwa (LZ lzap)) (LZ lzre))
         "5" -> menuUsuwania(LZ lzap, LZ lzre, 0)
         "6" -> menu(LZ lzap, LZ lzre)
         otherwise -> do
@@ -86,7 +96,7 @@ menuDodawania(LZ lzap, LZ lzre) = do
         print (Zadanie nazwa (DataZadania (string2Dzien dzien) (string2Miesiac miesiac) (string2int rok)) (read(godzina ++ ":00")::TimeOfDay) (string2Powtarzalnosc okres))
         zarzadzanieZaplanowanymi((insert (Zadanie nazwa (DataZadania (string2Dzien dzien) (string2Miesiac miesiac) (string2int rok)) (read(godzina ++ ":00")::TimeOfDay) (string2Powtarzalnosc okres)) (LZ lzap)), LZ lzre)
 -- *********************
--- menu usuwania zadaÅ„
+-- menu usuwania zadañ
 -- (lista zaplanowanych, lista zrealizowanych,tryb (0/1))
 -- tryb = 0 - usuwanie zaplanowanych
 -- tryb = 1 - usuwanie zrealizowanych
@@ -119,7 +129,7 @@ menuUsuwania(LZ lzap, LZ lzre,tryb) = do
             putStrLn "Zla opcja!"
             menuUsuwania(LZ lzap, LZ lzre,tryb)
 -- *************************************
--- menu zarzÄ…dzania zrealizowanych zadaÅ„
+-- menu zarz¹dzania zrealizowanych zadañ
 -- *************************************
 zarzadzanieZrealizowanymi(LZ lzap, LZ lzre) = do
     putStrLn ""
@@ -131,7 +141,7 @@ zarzadzanieZrealizowanymi(LZ lzap, LZ lzre) = do
     option <- getLine
     case option of
         "1" -> do
-            print (LZ lzre)
+            putStrLn (showAll (LZ lzre))
             zarzadzanieZrealizowanymi(LZ lzap, LZ lzre)
         "2" -> menuUsuwania(LZ lzap, LZ lzre,1)
         "3" -> menu(LZ lzap, LZ lzre)
