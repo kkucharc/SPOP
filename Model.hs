@@ -12,35 +12,31 @@ type Rok = Int
 -- data zadania
 data DataZadania = DataZadania Dzien Miesiac Rok deriving (Eq, Show, Read)
 type Godzina = TimeOfDay
--- powtarzalnoœæ zadania:
+-- powtarzalnoÅ›Ä‡ zadania:
 data Powtarzalnosc = Jednorazowe | Co_dzien | Co_tydzien | Co_miesiac | Co_rok deriving (Eq, Show, Read)
 -- zadanie:
 data Zadanie = Zadanie Nazwa DataZadania Godzina Powtarzalnosc deriving (Eq, Show, Read)
--- klasa listy zadañ
+-- klasa listy zadaÅ„
 class ListaZadan lz where
     empty :: lz -- zwraca pusta liste
     insert :: Zadanie -> lz -> lz -- dodaje zadanie do listy
-    --delete :: Zadanie -> lz -> lz -- ususwa element z listy
+    delete :: String -> lz -> lz -- ususwa element z listy
     deleteAll :: lz -> lz
-    --show :: lz -> [String] -- wyswietla kolejne elementy listy
--- lista zaplanowanych zadañ
-data ListaZaplanowanych = LZap [Zadanie] deriving Show
-instance ListaZadan ListaZaplanowanych where
-    empty = LZap []
-    insert z (LZap lzap) = LZap (lzap ++ [z])
-    deleteAll (LZap lzap) = empty
-    --delete z empty = empty
-    --delete z (LZap [x]) | z == x = empty
--- lista zrealizowanych zadañ
-data ListaZrealizowanych = LZre [Zadanie] deriving Show
-instance ListaZadan ListaZrealizowanych where
-    empty = LZre []
-    insert z (LZre lzre) = LZre (lzre ++ [z])
-    deleteAll (LZre lzre) = empty
+data LZad = LZ [Zadanie] deriving Show
+-- instancja listy zadaÅ„
+instance ListaZadan LZad where
+    empty = LZ []
+    insert z (LZ lz) = LZ (lz ++ [z])
+    delete nazwa (LZ lz) = LZ newLzap where
+        newLzap = concat (map (\x -> if pobierzNazwe x == nazwa then [] else [x]) lz)
+    deleteAll (LZ lz) = empty
 -- ******************
 -- Funkcje pomocnicze
 -- ******************
--- sprawdza czy dany string sk³ada siê tylko z liczb/liter
+-- funkcja pobierajÄ…ca nazwÄ™ zadania
+pobierzNazwe :: Zadanie -> String
+pobierzNazwe (Zadanie nazwa dataZadania godzina powtarzalnosc) = nazwa
+-- sprawdza czy dany string skÅ‚ada siÄ™ tylko z liczb/liter
 czyString :: String -> Bool
 czyString [] = False
 czyString [x] | isAlphaNum x = True
@@ -70,7 +66,7 @@ czyGodzina (a:b:c:d:e:f) | a >= '0' && a <= '1' && (isDigit b) && c == ':' && d 
                          | a == '2' && b >= '0' && b <= '3' && c == ':' && d >= '0' && d <= '5' && (isDigit e) && f == [] = True
 						 | otherwise = False
 czyGodzina xs | (length xs) >= 6 || (length xs) <= 4 = False
--- sprawdza czy poprawny okres wystêpowania zdarzenia
+-- sprawdza czy poprawny okres wystÄ™powania zdarzenia
 czyPowtarzalnosc :: String -> Bool
 czyPowtarzalnosc [] = False
 czyPowtarzalnosc xs | xs == "jednorazowe" || xs == "co dzien" || xs == "co tydzien" || xs == "co miesiac" || xs == "co rok" = True
