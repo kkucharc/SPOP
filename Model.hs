@@ -44,12 +44,18 @@ instance ListaZadan LZad where
 -- ******************
 -- Funkcje pomocnicze
 -- ******************
--- zamienia kolejnosc (rok,miesiac,dzien) na (dzien,miesiac,rok)
-aktualnaData :: (Integer,Int,Int) -> (Int,Int,Integer)
-aktualnaData (y,m,d) = (d,m,y)
--- testowa wyswietl aktualna date
+-- funkcja ustawiajaca aktualny dzien oraz godzine na 00:00:00
+aktualnaData :: (Integer,Int,Int) -> DataZadania
+aktualnaData (rok,miesiac,dzien) = DZ (dzien,miesiac,rok) (read("00:00:00")::TimeOfDay)
+-- funkcja aktualizujaca aktualna date
+aktualizujDate :: DataZadania -> (String,String,String,String) -> DataZadania
+aktualizujDate (DZ (dzien,miesiac,rok) godzina) (nDzien,nMiesiac,nRok,nGodz) = DZ ((string2int nDzien),(string2int nMiesiac),(toInteger (string2int nRok))) (read(nGodz ++ ":00")::TimeOfDay) 
+-- wyswietla aktualna date
 wyswietlDate :: DataZadania -> String
 wyswietlDate (DZ (dzien,miesiac,rok) godzina) = "(" ++ (show dzien) ++ "-" ++ (show miesiac) ++ "-" ++ (show rok) ++ "), " ++ (show godzina)
+-- funkcja tworzaca zadanie
+tworzZadanie :: (String,String,String,String,String,String) -> Zadanie
+tworzZadanie (nazwa,dzien,miesiac,rok,godzina,powtarzalnosc) = Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(toInteger (string2int rok))) (read(godzina ++ ":00")::TimeOfDay)) (string2Powtarzalnosc powtarzalnosc)
 -- funkcja pobieraj¹ca nazwê zadania
 pobierzNazwe :: Zadanie -> String
 pobierzNazwe (Zadanie nazwa dataZadania powtarzalnosc) = nazwa

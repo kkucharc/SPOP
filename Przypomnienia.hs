@@ -14,8 +14,7 @@ main = do
     -- ustawienie defaultowej daty:
     c <- getCurrentTime
     -- obie listy na poczatku puste oraz aktualny dzien
-    -- ustawiany jest aktualny dzien,miesiac,rok oraz ustawiana jest godzina na 00:00:00
-    menu(empty, empty,DZ (aktualnaData (toGregorian $ utctDay c)) (read("00:00:00")::TimeOfDay)) 
+    menu(empty, empty,(aktualnaData (toGregorian $ utctDay c))) 
 -- ***********
 -- menu g³ówne
 -- przyjmuje dwa parametry (liste zaplanowanych i liste zrealizowanych)
@@ -49,7 +48,7 @@ menu (LZ lzap, LZ lzre,aktualnyDzien)= do
                 putStrLn "Blednie wprowadzone dane\nSprobuj ponownie"
                 menu (LZ lzap, LZ lzre,aktualnyDzien)
             else do
-                menu (LZ lzap, LZ lzre,(DZ ((string2int dzien),(string2int miesiac),(toInteger (string2int rok))) (read(godzina ++ ":00")::TimeOfDay)))
+                menu (LZ lzap, LZ lzre, aktualizujDate aktualnyDzien (dzien,miesiac,rok,godzina))
         "5" -> return()
         otherwise -> do
             putStrLn "Zla opcja!"
@@ -112,8 +111,8 @@ menuDodawania(LZ lzap, LZ lzre,aktualnyDzien) = do
         zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
 	else do
         putStrLn "Stworzono obiekt"
-        print (Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(toInteger (string2int rok))) (read(godzina ++ ":00")::TimeOfDay)) (string2Powtarzalnosc okres))
-        zarzadzanieZaplanowanymi((insert (Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(toInteger (string2int rok))) (read(godzina ++ ":00")::TimeOfDay)) (string2Powtarzalnosc okres)) (LZ lzap)), LZ lzre,aktualnyDzien)
+        print (tworzZadanie (nazwa,dzien,miesiac,rok,godzina,okres))
+        zarzadzanieZaplanowanymi((insert (tworzZadanie (nazwa,dzien,miesiac,rok,godzina,okres)) (LZ lzap)), LZ lzre,aktualnyDzien)
 -- *********************
 -- menu usuwania zadañ
 -- (lista zaplanowanych, lista zrealizowanych,tryb (0/1))
