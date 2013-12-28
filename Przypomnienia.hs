@@ -72,8 +72,6 @@ zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien) = do
         "2" -> do 
             putStrLn (showAll (LZ lzap))
             zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
-        -- TODO: na razie opcja 4 dodaje element do listy zrealizowanych
-        -- Nale¿y dodaæ usuwanie/zmianê daty w zale¿noœci od powtarzalnoœci zadania
         "4" -> do
             putStrLn "Podaj nazwe"
             nazwa <- getLine
@@ -81,7 +79,7 @@ zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien) = do
                 putStrLn "Bledny ciag znakow\nSprobuj ponownie."
                 zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
             else do
-                zarzadzanieZaplanowanymi(LZ lzap, insertAll (findByName nazwa (LZ lzap)) (LZ lzre),aktualnyDzien)
+                zarzadzanieZaplanowanymi(updateList nazwa (LZ lzap), insertAll (findByName nazwa (LZ lzap)) (LZ lzre),aktualnyDzien)
         "5" -> menuUsuwania(LZ lzap, LZ lzre, 0,aktualnyDzien)
         "6" -> menu(LZ lzap, LZ lzre,aktualnyDzien)
         otherwise -> do
@@ -103,7 +101,7 @@ menuDodawania(LZ lzap, LZ lzre,aktualnyDzien) = do
     rok <- getLine
     putStrLn "Wprowadz godzine (hh:mm)"
     godzina <- getLine
-    putStrLn "Wprowadz powtarzalnosc zdarzenia (jednorazowe/co dzien/co tydzien/co miesiac/co rok"
+    putStrLn "Wprowadz powtarzalnosc zdarzenia (jednorazowe/co dzien/co tydzien/co miesiac/co rok):"
     okres <- getLine
     if (czyString nazwa == False) || (czyDzien dzien == False) || (czyMiesiac miesiac == False) || (czyLiczba rok == False) || (czyGodzina godzina == False)|| (czyPowtarzalnosc okres == False) then do
         putStrLn "Wprowadzono bledne dane!"

@@ -25,6 +25,7 @@ class ListaZadan lz where
     deleteAll :: lz -> lz  -- usuwa wszystkie elementy z listy
     showAll :: lz -> String -- wyswietla wszystkie elementy na liscie
     findByName :: String -> lz -> [Zadanie] -- znajduje wszystkie zadania o podanej nazwie
+    updateList :: String -> lz -> lz -- aktualizacja listy
 data LZad = LZ [Zadanie] deriving (Show, Eq)
 -- instancja listy zadañ
 instance ListaZadan LZad where
@@ -41,9 +42,23 @@ instance ListaZadan LZad where
             else "Zadania: " ++ el
         el = concat (map (\x -> "\n- " ++ pobierzZadanie x) lz)
     findByName nazwa (LZ lz) = filter (\x -> pobierzNazwe x == nazwa) lz
+    updateList nazwa (LZ lz) = LZ newLz where
+        newLz = concat (map (\x -> if pobierzNazwe x == nazwa then aktualizujZadanie x else [x]) lz)
 -- ******************
 -- Funkcje pomocnicze
 -- ******************
+-- aktualizuje zadanie
+aktualizujZadanie :: Zadanie -> [Zadanie]
+aktualizujZadanie (Zadanie nazwa (DZ (dzien,miesiac,rok) godzina) powtarzalnosc) | powtarzalnosc == Jednorazowe = []
+    | powtarzalnosc == Co_dzien = [Zadanie nazwa (DZ (sprawdzDate (dzien + 1,miesiac,rok)) godzina) powtarzalnosc]
+    | powtarzalnosc == Co_tydzien = [Zadanie nazwa (DZ (sprawdzDate (dzien + 7,miesiac,rok)) godzina) powtarzalnosc]
+    | powtarzalnosc == Co_miesiac = [Zadanie nazwa (DZ (sprawdzDate (dzien,miesiac + 1,rok)) godzina) powtarzalnosc]
+    | powtarzalnosc == Co_rok = [Zadanie nazwa (DZ (dzien,miesiac,rok + 1) godzina) powtarzalnosc]
+-- funkcja sprwadzajaca czy nie przekroczony zostal dzien/miesiac
+sprawdzDate :: (Int,Int,Integer) -> (Int,Int,Integer)
+sprawdzDate (dzien,miesiac,rok) | dzien > 31 = sprawdzDate (1,miesiac+1,rok)
+    | miesiac > 12 = (dzien,1,rok+1)
+    | otherwise = (dzien,miesiac,rok)
 -- funkcja ustawiajaca aktualny dzien oraz godzine na 00:00:00
 aktualnaData :: (Integer,Int,Int) -> DataZadania
 aktualnaData (rok,miesiac,dzien) = DZ (dzien,miesiac,rok) (read("00:00:00")::TimeOfDay)
