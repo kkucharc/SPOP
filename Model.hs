@@ -6,16 +6,16 @@ import Data.Time hiding (Day)
 
 -- Definicja danych:
 type Nazwa = String
-data Dzien = Pon | Wt | Sr | Czw | Pt | Sob | Nie deriving (Eq, Show, Enum, Read)
-data Miesiac = Sty | Lut | Mar | Kwi | Maj | Cze | Lip | Sie | Wrz | Paz | Lis | Gru deriving (Eq, Show, Enum, Read)
+type Dzien = Int
+type Miesiac = Int
 type Rok = Int
--- data zadania
-data DataZadania = DataZadania Dzien Miesiac Rok deriving (Eq, Show, Read)
 type Godzina = TimeOfDay
+-- data zadania
+data DataZadania = DZ (Dzien,Miesiac,Rok) Godzina deriving (Eq, Show, Read)
 -- powtarzalnoœæ zadania:
 data Powtarzalnosc = Jednorazowe | Co_dzien | Co_tydzien | Co_miesiac | Co_rok deriving (Eq, Show, Read)
 -- zadanie:
-data Zadanie = Zadanie Nazwa DataZadania Godzina Powtarzalnosc deriving (Eq, Show, Read)
+data Zadanie = Zadanie Nazwa DataZadania Powtarzalnosc deriving (Eq, Show, Read)
 -- klasa listy zadañ
 class ListaZadan lz where
     empty :: lz -- zwraca pusta liste
@@ -46,10 +46,10 @@ instance ListaZadan LZad where
 -- ******************
 -- funkcja pobieraj¹ca nazwê zadania
 pobierzNazwe :: Zadanie -> String
-pobierzNazwe (Zadanie nazwa dataZadania godzina powtarzalnosc) = nazwa
+pobierzNazwe (Zadanie nazwa dataZadania powtarzalnosc) = nazwa
 -- funckja pobieraj¹ca zadanie do wyswietlania
 pobierzZadanie :: Zadanie -> String
-pobierzZadanie (Zadanie nazwa (DataZadania dzien miesiac rok) godzina powtarzalnosc) = nazwa ++ ", " ++ (dzien2string dzien) ++ " " ++ (miesiac2string miesiac) ++ " " ++ (show rok) ++ ", " ++ (show godzina) ++ ", " ++ (powtarzalnosc2string powtarzalnosc) 
+pobierzZadanie (Zadanie nazwa (DZ (dzien,miesiac,rok) godzina) powtarzalnosc) = nazwa ++ ", (" ++ (show dzien) ++ "-" ++ (show miesiac) ++ "-" ++ (show rok) ++ "), " ++ (show godzina) ++ ", " ++ (powtarzalnosc2string powtarzalnosc) 
 -- sprawdza czy dany string sk³ada siê tylko z liczb/liter
 czyString :: String -> Bool
 czyString [] = False
@@ -57,15 +57,20 @@ czyString [x] | isAlphaNum x = True
     | otherwise = False
 czyString (x:xs) | isAlphaNum x = czyString xs
     | otherwise = False
--- sprawdza czy poprawny dzien
+-- sprawdza czy dzien
 czyDzien :: String -> Bool
 czyDzien [] = False
-czyDzien xs | xs == "Pon" || xs == "Wt" || xs == "Sr" || xs == "Czw" || xs == "Pt" || xs == "Sob" || xs == "Nie" = True
+czyDzien [x] | x > '0' && x <= '9' = True
     | otherwise = False
--- sprawdza czy poprawny miesiac
+czyDzien (x:y:ys) | x == '3' && y >= '0' && y <= '1' && ys == [] = True
+    | x > '0' && x < '3' && y >= '0' && y <= '9' && ys == [] = True
+    | otherwise = False
+-- sprawcza czy miesiac
 czyMiesiac :: String -> Bool
 czyMiesiac [] = False
-czyMiesiac xs | xs == "Sty" || xs == "Lut" || xs == "Mar" || xs == "Kwi" || xs == "Maj" || xs == "Cze" || xs == "Lip" || xs == "Sie" || xs == "Wrz" || xs == "Paz" || xs == "Lis" || xs == "Gru" = True
+czyMiesiac [x] | x > '0' && x <= '9' = True
+    | otherwise = False
+czyMiesiac (x:y:ys) | x == '1' && y >= '0' && y < '3' && ys == [] = True
     | otherwise = False
 -- sprawdza czy liczba
 czyLiczba [] = False
@@ -85,60 +90,6 @@ czyPowtarzalnosc :: String -> Bool
 czyPowtarzalnosc [] = False
 czyPowtarzalnosc xs | xs == "jednorazowe" || xs == "co dzien" || xs == "co tydzien" || xs == "co miesiac" || xs == "co rok" = True
     | otherwise = False
--- zamiana String w Dzien
-string2Dzien :: String -> Dzien
-string2Dzien [] = error "Pusty string"
-string2Dzien xs = case xs of
-    "Pon" -> Pon
-    "Wt" -> Wt
-    "Sr" -> Sr
-    "Czw" -> Czw
-    "Pt" -> Pt
-    "Sob" -> Sob
-    "Nie" -> Nie
-    otherwise -> error "Niepoprawny string"
--- Zamiana Dzien w string
-dzien2string :: Dzien -> String
-dzien2string d = case d of
-    Pon -> "poniedzialek"
-    Wt -> "wtorek"
-    Sr -> "sroda"
-    Czw -> "czwartek"
-    Pt -> "piatek"
-    Sob -> "sobota"
-    Nie -> "niedziela"
--- zamiana Miesiac w String
-miesiac2string :: Miesiac -> String
-miesiac2string m = case m of 
-    Sty -> "styczen"
-    Lut -> "luty"
-    Mar -> "marzec"
-    Kwi -> "kwiecien"
-    Maj -> "maj"
-    Cze -> "czerwiec"
-    Lip -> "lipiec"
-    Sie -> "sierpien"
-    Wrz -> "wrzesien"
-    Paz -> "pazdziernik"
-    Lis -> "listopad"
-    Gru -> "grudzien"
--- zamiana String w Miesiac
-string2Miesiac :: String -> Miesiac
-string2Miesiac [] = error "Pusty string"
-string2Miesiac xs = case xs of
-    "Sty" -> Sty
-    "Lut" -> Lut
-    "Mar" -> Mar
-    "Kwi" -> Kwi
-    "Maj" -> Maj
-    "Cze" -> Cze
-    "Lip" -> Lip
-    "Sie" -> Sie
-    "Wrz" -> Wrz
-    "Paz" -> Paz
-    "Lis" -> Lis
-    "Gru" -> Gru
-    otherwise -> error "Niepoprawny string"
 -- zamiana String w Powtarzalnosc
 string2Powtarzalnosc :: String -> Powtarzalnosc
 string2Powtarzalnosc [] = error "Pusty string"

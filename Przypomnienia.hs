@@ -77,9 +77,9 @@ menuDodawania(LZ lzap, LZ lzre) = do
     putStrLn "Wprowadz nazwe zadania"
     nazwa <- getLine
     putStrLn "Wprowadz date zadania"
-    putStrLn "Dzien: (Pon / Wt / Sr / Czw / Pt / Sob / Nie)"
+    putStrLn "Dzien: (1-31)"
     dzien <- getLine
-    putStrLn "Miesiac: (Sty / Lut / Mar / Kwi / Maj / Cze / Lip / Sie / Wrz / Paz / Lis / Gru)"
+    putStrLn "Miesiac: (1-12)"
     miesiac <- getLine
     putStrLn "Rok:"
     rok <- getLine
@@ -93,8 +93,8 @@ menuDodawania(LZ lzap, LZ lzre) = do
         zarzadzanieZaplanowanymi(LZ lzap, LZ lzre)
 	else do
         putStrLn "Stworzono obiekt"
-        print (Zadanie nazwa (DataZadania (string2Dzien dzien) (string2Miesiac miesiac) (string2int rok)) (read(godzina ++ ":00")::TimeOfDay) (string2Powtarzalnosc okres))
-        zarzadzanieZaplanowanymi((insert (Zadanie nazwa (DataZadania (string2Dzien dzien) (string2Miesiac miesiac) (string2int rok)) (read(godzina ++ ":00")::TimeOfDay) (string2Powtarzalnosc okres)) (LZ lzap)), LZ lzre)
+        print (Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(string2int rok)) (read(godzina ++ ":00")::TimeOfDay)) (string2Powtarzalnosc okres))
+        zarzadzanieZaplanowanymi((insert (Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(string2int rok)) (read(godzina ++ ":00")::TimeOfDay)) (string2Powtarzalnosc okres)) (LZ lzap)), LZ lzre)
 -- *********************
 -- menu usuwania zadañ
 -- (lista zaplanowanych, lista zrealizowanych,tryb (0/1))
