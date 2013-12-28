@@ -8,7 +8,7 @@ import Data.Time hiding (Day)
 type Nazwa = String
 type Dzien = Int
 type Miesiac = Int
-type Rok = Int
+type Rok = Integer
 type Godzina = TimeOfDay
 -- data zadania
 data DataZadania = DZ (Dzien,Miesiac,Rok) Godzina deriving (Eq, Show, Read)
@@ -44,6 +44,12 @@ instance ListaZadan LZad where
 -- ******************
 -- Funkcje pomocnicze
 -- ******************
+-- zamienia kolejnosc (rok,miesiac,dzien) na (dzien,miesiac,rok)
+aktualnaData :: (Integer,Int,Int) -> (Int,Int,Integer)
+aktualnaData (y,m,d) = (d,m,y)
+-- testowa wyswietl aktualna date
+wyswietlDate :: DataZadania -> String
+wyswietlDate (DZ (dzien,miesiac,rok) godzina) = "(" ++ (show dzien) ++ "-" ++ (show miesiac) ++ "-" ++ (show rok) ++ "), " ++ (show godzina)
 -- funkcja pobieraj¹ca nazwê zadania
 pobierzNazwe :: Zadanie -> String
 pobierzNazwe (Zadanie nazwa dataZadania powtarzalnosc) = nazwa
