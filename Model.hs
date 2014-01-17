@@ -81,6 +81,10 @@ wyswietlDate (DZ (dzien,miesiac,rok) godzina) = "(" ++ (show dzien) ++ "-" ++ (s
 -- funkcja tworzaca zadanie
 tworzZadanie :: (String,String,String,String,String,String) -> Zadanie
 tworzZadanie (nazwa,dzien,miesiac,rok,godzina,powtarzalnosc) = Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(toInteger (string2int rok))) (read(godzina ++ ":00")::TimeOfDay)) (string2Powtarzalnosc powtarzalnosc)
+-- funkcja tworzaca zadanie - przeciazona dla wczytywania plikow
+--tworzZadaniePlik :: [String,String,String,String,String,String] -> Zadanie
+tworzZadaniePlik :: [String] -> Zadanie
+tworzZadaniePlik [nazwa,dzien,miesiac,rok,godzina,powtarzalnosc] = Zadanie nazwa (DZ ((string2int dzien),(string2int miesiac),(toInteger (string2int rok))) (read(godzina)::TimeOfDay)) (string2Powtarzalnosc powtarzalnosc)
 -- funkcja pobieraj¹ca nazwê zadania
 pobierzNazwe :: Zadanie -> String
 pobierzNazwe (Zadanie nazwa dataZadania powtarzalnosc) = nazwa

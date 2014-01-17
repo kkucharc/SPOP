@@ -200,7 +200,6 @@ menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien) = do
         "4" -> do
             putStrLn "Podaj nazwe pliku z ktorego wczytac zrealizowane zadania"
             nazwa <- getLine
-            wczytaj nazwa (LZ lzap)
             wczytaj nazwa (LZ lzre)
             menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
         "5" -> menu(LZ lzap, LZ lzre,aktualnyDzien)
