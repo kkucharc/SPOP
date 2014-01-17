@@ -5,6 +5,7 @@ Katarzyna Kucharczyk
 Pawe³ Matuszewski
 -}
 import Model
+import Pliki
 import Data.Time hiding (Day)
 -- ****
 -- main
@@ -72,6 +73,9 @@ zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien) = do
         "2" -> do 
             putStrLn (showAll (LZ lzap))
             zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
+        "3" -> do
+            putStrLn (showRecents aktualnyDzien (LZ lzap))
+            zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
         "4" -> do
             putStrLn "Podaj nazwe"
             nazwa <- getLine
@@ -107,7 +111,7 @@ menuDodawania(LZ lzap, LZ lzre,aktualnyDzien) = do
         putStrLn "Wprowadzono bledne dane!"
         putStrLn "Powrot do zarzadzania zaplanowanymi zadaniami"
         zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
-	else do
+    else do
         putStrLn "Stworzono obiekt"
         print (tworzZadanie (nazwa,dzien,miesiac,rok,godzina,okres))
         zarzadzanieZaplanowanymi((insert (tworzZadanie (nazwa,dzien,miesiac,rok,godzina,okres)) (LZ lzap)), LZ lzre,aktualnyDzien)
@@ -178,6 +182,27 @@ menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien) = do
     putStrLn "5. Powrot"
     option <- getLine
     case option of
+        "1" -> do
+            putStrLn "Podaj nazwe pliku do ktorego zapisac zaplanowane zadania"
+            nazwa <- getLine
+            zapisz nazwa (LZ lzap)
+            menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
+        "2" -> do
+            putStrLn "Podaj nazwe pliku z ktorego wczytac zaplanowane zadania"
+            nazwa <- getLine
+            wczytaj nazwa (LZ lzap)
+            menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
+        "3" -> do
+            putStrLn "Podaj nazwe pliku do ktorego zapisac zrealizowane zadania"
+            nazwa <- getLine
+            zapisz nazwa (LZ lzre)
+            menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
+        "4" -> do
+            putStrLn "Podaj nazwe pliku z ktorego wczytac zrealizowane zadania"
+            nazwa <- getLine
+            wczytaj nazwa (LZ lzap)
+            wczytaj nazwa (LZ lzre)
+            menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
         "5" -> menu(LZ lzap, LZ lzre,aktualnyDzien)
         otherwise -> do
             putStrLn "Zla opcja!"

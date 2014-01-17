@@ -24,7 +24,10 @@ class ListaZadan lz where
     delete :: String -> lz -> lz -- ususwa element z listy
     deleteAll :: lz -> lz  -- usuwa wszystkie elementy z listy
     showAll :: lz -> String -- wyswietla wszystkie elementy na liscie
+    showRecents :: DataZadania -> lz -> String -- funkcja zwracajaca zadania z dzis i poprzednie 
     findByName :: String -> lz -> [Zadanie] -- znajduje wszystkie zadania o podanej nazwie
+    --findByActualDate :: DataZadania -> lz -> lz -- znajduje wszystkie po aktualnej dacie
+    findByActualDate :: DataZadania -> lz -> [Zadanie] -- znajduje wszystkie po aktualnej dacie
     updateList :: String -> lz -> lz -- aktualizacja listy
 data LZad = LZ [Zadanie] deriving (Show, Eq)
 -- instancja listy zadañ
@@ -41,7 +44,14 @@ instance ListaZadan LZad where
         wynik = if (LZ lz) == empty then "Brak zadan na liscie"
             else "Zadania: " ++ el
         el = concat (map (\x -> "\n- " ++ pobierzZadanie x) lz)
+    showRecents date (LZ lz) = "*********\n" ++ wynik ++ "\n*********\n" where
+        ln = findByActualDate date (LZ lz)
+        wynik = if (LZ ln) == empty then "Brak zadan na liscie"
+            else "Zadania: " ++ el
+        el = concat (map (\x -> "\n- " ++ pobierzZadanie x) ln)
     findByName nazwa (LZ lz) = filter (\x -> pobierzNazwe x == nazwa) lz
+    --findByActualDate dat (LZ lz) = insertAll (filter (\x -> pobierzDate x == dat) lz) empty
+    findByActualDate dat (LZ lz) = filter (\x -> porownajDate (pobierzDate x) dat == True) lz
     updateList nazwa (LZ lz) = LZ newLz where
         newLz = concat (map (\x -> if pobierzNazwe x == nazwa then aktualizujZadanie x else [x]) lz)
 -- ******************
@@ -74,6 +84,14 @@ tworzZadanie (nazwa,dzien,miesiac,rok,godzina,powtarzalnosc) = Zadanie nazwa (DZ
 -- funkcja pobieraj¹ca nazwê zadania
 pobierzNazwe :: Zadanie -> String
 pobierzNazwe (Zadanie nazwa dataZadania powtarzalnosc) = nazwa
+-- funkcja pobieraj¹ca date zadania
+pobierzDate :: Zadanie -> DataZadania
+pobierzDate (Zadanie nazwa dataZadania powtarzalnosc) = dataZadania
+-- funkcja porownujaca daty
+porownajDate :: DataZadania -> DataZadania -> Bool
+porownajDate (DZ (dzien1,miesiac1,rok1) godzina1) (DZ (dzien2,miesiac2,rok2) godzina2) | rok1 < rok2 = True
+    | rok1 == rok2 && dzien1 <= dzien2 && miesiac1 <= miesiac2 = True 
+    | otherwise = False
 -- funckja pobieraj¹ca zadanie do wyswietlania
 pobierzZadanie :: Zadanie -> String
 pobierzZadanie (Zadanie nazwa (DZ (dzien,miesiac,rok) godzina) powtarzalnosc) = nazwa ++ ", (" ++ (show dzien) ++ "-" ++ (show miesiac) ++ "-" ++ (show rok) ++ "), " ++ (show godzina) ++ ", " ++ (powtarzalnosc2string powtarzalnosc) 
