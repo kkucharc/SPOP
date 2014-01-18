@@ -80,7 +80,7 @@ zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien) = do
             putStrLn (showRecents aktualnyDzien (LZ lzap))
             zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
         "4" -> do
-            putStrLn "Podaj nazwe"
+            putStrLn "Podaj nazwe:"
             nazwa <- getLine
             if czyString nazwa == False then do
                 putStrLn "Bledny ciag znakow\nSprobuj ponownie."
@@ -97,7 +97,7 @@ zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien) = do
 -- **********************
 menuDodawania(LZ lzap, LZ lzre,aktualnyDzien) = do
     putStrLn ""
-    putStrLn "Wprowadz nazwe zadania"
+    putStrLn "Wprowadz nazwe zadania:"
     nazwa <- getLine
     putStrLn "Wprowadz date zadania"
     putStrLn "Dzien: (1-31)"
@@ -106,7 +106,7 @@ menuDodawania(LZ lzap, LZ lzre,aktualnyDzien) = do
     miesiac <- getLine
     putStrLn "Rok:"
     rok <- getLine
-    putStrLn "Wprowadz godzine (hh:mm)"
+    putStrLn "Wprowadz godzine: (hh:mm)"
     godzina <- getLine
     putStrLn "Wprowadz powtarzalnosc zdarzenia (jednorazowe/co dzien/co tydzien/co miesiac/co rok):"
     okres <- getLine
@@ -134,7 +134,7 @@ menuUsuwania(LZ lzap, LZ lzre,tryb,aktualnyDzien) = do
     option <- getLine
     case option of
         "1" -> do
-            putStrLn "Podaj nazwe"
+            putStrLn "Podaj nazwe:"
             nazwa <- getLine
             if czyString nazwa == False then do
                 putStrLn "Bledny ciag znakow\nSprobuj ponownie."
@@ -143,8 +143,8 @@ menuUsuwania(LZ lzap, LZ lzre,tryb,aktualnyDzien) = do
                 if tryb == 0 then menuUsuwania(delete nazwa (LZ lzap), LZ lzre,tryb,aktualnyDzien)
                 else menuUsuwania(LZ lzap, delete nazwa (LZ lzre),tryb,aktualnyDzien)
         "2" -> do
-            if tryb == 0 then zarzadzanieZaplanowanymi(deleteAll (LZ lzap),LZ lzre,aktualnyDzien)
-            else zarzadzanieZrealizowanymi(LZ lzap, deleteAll (LZ lzre),aktualnyDzien)
+            if tryb == 0 then zarzadzanieZaplanowanymi(deleteAll,LZ lzre,aktualnyDzien)
+            else zarzadzanieZrealizowanymi(LZ lzap, deleteAll,aktualnyDzien)
         "3" -> do
             if tryb == 0 then zarzadzanieZaplanowanymi(LZ lzap, LZ lzre,aktualnyDzien)
             else zarzadzanieZrealizowanymi(LZ lzap, LZ lzre,aktualnyDzien)
@@ -207,7 +207,6 @@ menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien) = do
         otherwise -> do
             putStrLn "Zla opcja!"
             menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
-
 -- funkcja pomocnicza wczytujaca plik
 wczytaj :: FilePath -> Int -> (LZad, LZad, DataZadania) -> IO()
 wczytaj nazwaPliku num (LZ lzap, LZ lzre,aktualnyDzien) = do 
@@ -224,4 +223,3 @@ wczytaj nazwaPliku num (LZ lzap, LZ lzre,aktualnyDzien) = do
                             putStrLn ("Nie istnieje " ++ nazwaPliku)
                             menuZapisOdczyt((LZ lzap), LZ lzre,aktualnyDzien)
                             else putStrLn ("Plik zaladowany")
-    
