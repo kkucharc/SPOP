@@ -15,14 +15,8 @@ zapisz nazwaPliku (LZ l) = do
             putStrLn ("Zapisano do pliku " ++ nazwaPliku)
 
 -- funkcja parsujaca linie
-czysc :: [String] -> [String]
-czysc (x:xs) = do
-    line <- map (\y -> trim y) (czyscPrzecinki x ',')
-    y <- czyscDate line
-    y:(czysc xs)
-
-czysc2 :: String -> [String]
-czysc2 x = do
+czysc :: String -> [String]
+czysc x = do
     line <- map (\y -> trim y) (czyscPrzecinki x ',')
     czyscDate line
 

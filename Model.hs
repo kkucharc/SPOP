@@ -16,7 +16,7 @@ data DataZadania = DZ (Dzien,Miesiac,Rok) Godzina deriving (Eq, Show, Read)
 data Powtarzalnosc = Jednorazowe | Co_dzien | Co_tydzien | Co_miesiac | Co_rok deriving (Eq, Show, Read)
 -- zadanie:
 data Zadanie = Zadanie Nazwa DataZadania Powtarzalnosc deriving (Eq, Show, Read)
-data ZadaniePlikowe = ZadaniePlikowe (String,String,String,String,String,String) deriving (Eq, Show, Read)
+
 -- klasa listy zadañ
 class ListaZadan lz where
     empty :: lz -- zwraca pusta liste
@@ -51,10 +51,10 @@ instance ListaZadan LZad where
             else "Zadania: " ++ el
         el = concat (map (\x -> "\n- " ++ pobierzZadanie x) ln)
     findByName nazwa (LZ lz) = filter (\x -> pobierzNazwe x == nazwa) lz
-    --findByActualDate dat (LZ lz) = insertAll (filter (\x -> pobierzDate x == dat) lz) empty
     findByActualDate dat (LZ lz) = filter (\x -> porownajDate (pobierzDate x) dat == True) lz
     updateList nazwa (LZ lz) = LZ newLz where
         newLz = concat (map (\x -> if pobierzNazwe x == nazwa then aktualizujZadanie x else [x]) lz)
+
 -- ******************
 -- Funkcje pomocnicze
 -- ******************

@@ -214,9 +214,9 @@ wczytaj nazwaPliku num (LZ lzap, LZ lzre,aktualnyDzien) = do
         file <- readFile nazwaPliku
         putStrLn ("Plik wczytany")
         if num == 1 then 
-            menuZapisOdczyt(insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file)) (LZ lzap), LZ lzre,aktualnyDzien)
+            menuZapisOdczyt(insertAll ( map(\x -> tworzZadaniePlik (czysc x)) (lines file)) (LZ lzap), LZ lzre,aktualnyDzien)
                 else do
-                    menuZapisOdczyt(LZ lzap, insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file))  (LZ lzre),aktualnyDzien)
+                    menuZapisOdczyt(LZ lzap, insertAll ( map(\x -> tworzZadaniePlik (czysc x)) (lines file))  (LZ lzre),aktualnyDzien)
                     ) errorHandler where
                     errorHandler e =
                         if isDoesNotExistError e then do
