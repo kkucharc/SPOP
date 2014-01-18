@@ -16,6 +16,7 @@ data DataZadania = DZ (Dzien,Miesiac,Rok) Godzina deriving (Eq, Show, Read)
 data Powtarzalnosc = Jednorazowe | Co_dzien | Co_tydzien | Co_miesiac | Co_rok deriving (Eq, Show, Read)
 -- zadanie:
 data Zadanie = Zadanie Nazwa DataZadania Powtarzalnosc deriving (Eq, Show, Read)
+data ZadaniePlikowe = ZadaniePlikowe (String,String,String,String,String,String) deriving (Eq, Show, Read)
 -- klasa listy zadañ
 class ListaZadan lz where
     empty :: lz -- zwraca pusta liste

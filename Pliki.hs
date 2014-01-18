@@ -14,24 +14,19 @@ zapisz nazwaPliku (LZ l) = do
             writeFile nazwaPliku (concat (map (\x -> pobierzZadanie x ++ "\n" ) l))
             putStrLn ("Zapisano do pliku " ++ nazwaPliku)
 
--- funkcja wczytujaca plik
-wczytaj :: FilePath -> LZad -> IO LZad
-wczytaj nazwaPliku (LZ l) = do
-    file <- readFile nazwaPliku
-    let line = tworzZadaniePlik (czytaj (lines file))
-    return (insert line (LZ l))
-
 -- funkcja parsujaca linie
---czytaj :: [String] -> (String,String,String,String,String,String)
---czytaj :: [String] -> Zadanie
-czytaj :: [String] -> [String]
-czytaj (x:xs) = do 
-    line <- ( map (\y -> trim y) (czyscPrzecinki x ','))
-    --tworzZadaniePlik (czyscDate line)
-    czyscDate line
-    
-    
+czysc :: [String] -> [String]
+czysc (x:xs) = do
+    line <- map (\y -> trim y) (czyscPrzecinki x ',')
+    y <- czyscDate line
+    y:(czysc xs)
 
+czysc2 :: String -> [String]
+czysc2 x = do
+    line <- map (\y -> trim y) (czyscPrzecinki x ',')
+    czyscDate line
+
+-- funkcja eliminujaca delimitery
 czyscPrzecinki :: String -> Char -> [String]
 czyscPrzecinki [] delim = [""]
 czyscPrzecinki (c:cs) delim
@@ -40,6 +35,7 @@ czyscPrzecinki (c:cs) delim
           where
              rest = czyscPrzecinki cs delim
 
+-- funkcja przetwarzajaca format (xx-yy-zzzz) na String
 czyscDate :: String -> [String]
 czyscDate [] = [""]
 czyscDate (c:cs)
@@ -49,7 +45,7 @@ czyscDate (c:cs)
           where
              rest = czyscDate cs
 
+-- trymer bialych znakow
 trim :: String -> String
 trim = f . f
    where f = reverse . dropWhile isSpace
-

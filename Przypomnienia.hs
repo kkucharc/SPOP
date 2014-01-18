@@ -190,8 +190,7 @@ menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien) = do
         "2" -> do
             putStrLn "Podaj nazwe pliku z ktorego wczytac zaplanowane zadania"
             nazwa <- getLine
-            wczytaj nazwa (LZ lzap)
-            menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
+            wczytaj nazwa 1 (LZ lzap, LZ lzre,aktualnyDzien)
         "3" -> do
             putStrLn "Podaj nazwe pliku do ktorego zapisac zrealizowane zadania"
             nazwa <- getLine
@@ -200,9 +199,18 @@ menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien) = do
         "4" -> do
             putStrLn "Podaj nazwe pliku z ktorego wczytac zrealizowane zadania"
             nazwa <- getLine
-            wczytaj nazwa (LZ lzre)
-            menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
+            wczytaj nazwa 2 (LZ lzap, LZ lzre,aktualnyDzien)
         "5" -> menu(LZ lzap, LZ lzre,aktualnyDzien)
         otherwise -> do
             putStrLn "Zla opcja!"
             menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien)
+
+-- funkcja pomocnicza wczytujaca plik
+wczytaj :: FilePath -> Int -> (LZad, LZad, DataZadania) -> IO()
+wczytaj nazwaPliku num (LZ lzap, LZ lzre,aktualnyDzien) = do 
+    file <- readFile nazwaPliku
+    if num == 1 then 
+        menuZapisOdczyt(insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file)) (LZ lzap), LZ lzre,aktualnyDzien)
+            else do
+                menuZapisOdczyt(LZ lzap, insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file))  (LZ lzre),aktualnyDzien)
+    return ()
