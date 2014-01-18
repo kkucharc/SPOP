@@ -7,6 +7,9 @@ Pawe³ Matuszewski
 import Model
 import Pliki
 import Data.Time hiding (Day)
+import Control.Exception
+import System.IO
+import System.IO.Error
 -- ****
 -- main
 -- ****
@@ -208,9 +211,17 @@ menuZapisOdczyt(LZ lzap, LZ lzre,aktualnyDzien) = do
 -- funkcja pomocnicza wczytujaca plik
 wczytaj :: FilePath -> Int -> (LZad, LZad, DataZadania) -> IO()
 wczytaj nazwaPliku num (LZ lzap, LZ lzre,aktualnyDzien) = do 
-    file <- readFile nazwaPliku
-    if num == 1 then 
-        menuZapisOdczyt(insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file)) (LZ lzap), LZ lzre,aktualnyDzien)
-            else do
-                menuZapisOdczyt(LZ lzap, insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file))  (LZ lzre),aktualnyDzien)
-    return ()
+    catch (do 
+        file <- readFile nazwaPliku
+        putStrLn ("Plik wczytany")
+        if num == 1 then 
+            menuZapisOdczyt(insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file)) (LZ lzap), LZ lzre,aktualnyDzien)
+                else do
+                    menuZapisOdczyt(LZ lzap, insertAll ( map(\x -> tworzZadaniePlik (czysc2 x)) (lines file))  (LZ lzre),aktualnyDzien)
+                    ) errorHandler where
+                    errorHandler e =
+                        if isDoesNotExistError e then do
+                            putStrLn ("Nie istnieje " ++ nazwaPliku)
+                            menuZapisOdczyt((LZ lzap), LZ lzre,aktualnyDzien)
+                            else putStrLn ("Plik zaladowany")
+    
